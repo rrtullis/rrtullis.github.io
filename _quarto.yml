@@ -8,6 +8,14 @@ website:
       - href: index.qmd
         text: Home
       - about.qmd
+      - text: "Sample Analysis"
+        menu:
+          - href: sample-analysis/overview.qmd
+            text: "Overview"
+          - href: sample-analysis/data_cleaning.qmd
+            text: "Data Cleaning"
+
+
 
 format:
   html:
