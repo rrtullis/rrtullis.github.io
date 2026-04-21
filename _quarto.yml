@@ -14,6 +14,12 @@ website:
             text: "Overview"
           - href: sample-analysis/data_cleaning.qmd
             text: "Data Cleaning"
+          - href: sample-analysis/eda.qmd
+            text: "Exploratory Data Analysis"
+          - href: sample-analysis/modeling.qmd
+            text: "Modeling"
+          - href: sample-analysis/data-info.qmd
+            text: "Additional Info"
 
 
 
