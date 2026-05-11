@@ -2,6 +2,7 @@
 title: Predicting Metacritic Scores from Steam Data
 author: Reagan Tullis
 execute:
+    cache: true
     warning: false
     message: false
 ---
@@ -64,10 +65,12 @@ target = "metacritic_score"
 games=games.copy()
 ```
 
-## Dataset
-The data used in this analysis was sourced from [Kaggle](https://www.kaggle.com/ds/2109585). It contains information fetched from Steam's API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds an ~70% market share of the area. A full overview of the `games` dataset, with information on its features, can be found in `data_info.md`.
+The GitHub repository containing all code used in this analysis can be found at [https://github.com/rrtullis/sample-analysis](https://github.com/rrtullis/sample-analysis).
 
-The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is claculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this database is shown below.
+## Dataset
+The data used in this analysis was sourced from [Kaggle](https://www.kaggle.com/ds/2109585). It contains information fetched from Steam's API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds an ~70% market share. A full overview of the `games` dataset, with information on its features, can be found on the Data Documentation page under Additional Info.
+
+The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is claculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this dataset is shown below.
 
 ```{python}
 #| echo: false
@@ -79,10 +82,10 @@ The goal for this analysis was to predict the Metacritic score of a game. Metacr
 )
 ```
 
-The scores present in this database range from 6 to 97, with a mean of ~73.9 and a standard deviation of ~10.3. The distribution is somewhat left-skewed, but I opted not to transform `metacritic_score`, as I wanted my model's predictions to be interpretable as the actual predicted score, rather than a transformation of the score.
+The scores present in this dataset range from 6 to 97, with a mean of ~73.9 and a standard deviation of ~10.3. The distribution is somewhat left-skewed, but I opted not to transform `metacritic_score`, as I wanted my model's predictions to be interpretable as the actual predicted score, rather than a transformation of the score.
 
 ## Data Cleaning
-The data used in this analysis was loaded from a `.json` and required extensive cleaning before it could be used. This cleaning involved manually typing each feature appropriately, dealing with placeholder missing values, and dropping any columns that wouldn't be useful for analysis. A full walkthrough of this process can be found in `data_cleaning.qmd`.
+The data used in this analysis was loaded from a `.json` and required extensive cleaning before it could be used. This cleaning involved manually typing each feature appropriately, dealing with placeholder missing values, and dropping any columns that wouldn't be useful for analysis. A full walkthrough of this process can be found on the Data Cleaning page.
 
 The main event for data cleaning came when dealing with five columns in particular: `supported_languages`, `full_audio_languages`, `genres`, and `categories` all contained lists of strings, and `tags` contained dictionaries. In order to convert these columns to a usuable format for analysis, I used sklearn's `MultiLabelBinarizer` to convert the list columns to a set of binary columns, where a 1 in a given column (e.g., supported_languages_English) would indicate that, for instance, the game supports the English language.  
 
@@ -102,7 +105,7 @@ for f in list_features:
 As for `tags`, I used pandas' `json_normalize` method to achieve a similar result, with the main difference that the added columns and values corresponded to key-value pairs in the dictionary. The final dataset that I used to train my models on had 4256 rows and 757 columns.
 
 ## Initial Models
-To begin the modeling phase, I performed a simple repeated K-fold cross validation of a number of basic, untuned models that used sklearn's and XGBoost's default parameters. The full preprocessing pipeline and code for each of these models can be found in `initial_models.qmd`. An overview of their initial results is shown below.
+To begin the modeling phase, I performed a simple repeated K-fold cross validation of a number of basic, untuned models that used sklearn's and XGBoost's default parameters. The full preprocessing pipeline and code for each of these models can be found on the Early Models page under Additional Info. An overview of their initial results is shown below.
 
 |Model|Mean RMSE|Mean R2|
 |-|-|-|
@@ -113,14 +116,14 @@ To begin the modeling phase, I performed a simple repeated K-fold cross validati
 | Untuned Random Forest | 7.6184 | 0.4479 |
 | Untuned XGBoost Regressor | 7.6498 | 0.4420 |
 
-As you can see from the metrics, linear models like Lasso performed poorly, as did K Nearest Neighbors and a lone Decision Tree. The ensemble tree methods of a Random Forest and XGBoost Regressor vastly outperformed the other models. 
+Linear models like Lasso performed poorly, as did K-Nearest Neighbors and a lone Decision Tree. The ensemble tree methods of a Random Forest and XGBoost Regressor vastly outperformed the other models. 
 
 ## Iteration
-Based off of the initial models' performance, I chose to iterate on both ensemble tree models. I began with some modest tuning, which slightly improved their performance. As before, a full explanation of my process, along with the code required to reproduce my results, can be found in `modeling.qmd`.
+Based off of the initial models' performance, I chose to iterate on both ensemble tree models. I began with some modest tuning, which slightly improved their performance. As before, a full explanation of my process, along with the code required to reproduce my results, can be found on the Modeling page.
 
 This provided some improvement, but I was concerned about the high dimensionality of my data, and thought that if I could distill my 756 features into a smaller number of columns I may get better results. My first attempt at this was to simply remove the columns generated from `MultiLabelBinarizer` and `json_normalize` from my training data. The resulting metrics were immediately poorer, and I opted to pursue another angle.
 
-My next attempt involved using sklearn's `TruncatedSVD` to generate new features that captured the variance of `supported_languages`, `full_audio_languages`, `genres`, `categories`, and `tags`. I used `TruncatedSVD` over standard PCA since, unlike PCA, `TruncatedSVD` does not center the data, making it better for sparse data like my own. I also opted to apply `TruncatedSVD` to each of the five groups of columns seperately because I wanted to preserve the domain of group. When selecting how many features to return for each group, I made sure that I had enough to capture at least 90% of the variance in the category.  
+My next attempt involved using sklearn's `TruncatedSVD` to generate new features that captured the variance of `supported_languages`, `full_audio_languages`, `genres`, `categories`, and `tags`. I used `TruncatedSVD` over standard PCA since, unlike PCA, `TruncatedSVD` does not center the data, making it better for sparse data like my own. I also opted to apply `TruncatedSVD` to each of the five groups of columns seperately because I wanted to preserve the domain of each group. When selecting how many features to return for each group, I made sure that I had enough to capture at least 90% of the variance in the category.  
 Unfortunately, even after tuning these models still performed worse than my modestly tuned models. What ultimately became my best-performing model was a XGBoost Regressor operating on the original dataset that had been subjected to extensive tuning. The only change was an added feature - the ratio of positive to negative votes, stored in `positive_negative_ratio`.
 
 ## Final Model
@@ -254,10 +257,8 @@ xgb_permimp_df["feature"] = xgb_permimp_df["feature"].str.removeprefix("ord__")
 )
 ```
 
-
-
 ## Interpretation
 
-Based on my metrics, my model was able to explain ~52% of the variance in Metarcitic score, and made predictions that were, on average, off by ~7.1 points. This is a notable improvement over a dummy regressor, but is not particularly impressive overall. One reason for this mediocore performance may be that the `games` dataset does not contain information that is particularly relevant to a game's Metacritic score. Most of the data used in this analysis was scraped from the Steam store, and while a storefront is a decent place to start collecting information, a game's store presentation does not necessarily reflect how people will percieve or rate it. Were the dataset to contain more information of this type, I expect the performance metrics could be improved drastically.
+Based on my metrics, my model was able to explain ~52% of the variance in Metarcitic score, and made predictions that were, on average, off by ~7.1 points. This is a notable improvement over a dummy regressor, but is not particularly impressive overall. One reason for this mediocore performance may be that the `games` dataset does not contain information that is particularly relevant to a game's Metacritic score. Most of the data used in this analysis was scraped from the Steam store, and while a storefront is a decent place to start collecting information, a game's store presentation does not necessarily reflect how people will percieve or rate it. Were the dataset to contain more relevant information, I expect the performance metrics could be improved drastically.
 
 As for the columns we do have, the model relies most heavily upon the engineered ratio of positive to negative votes, followed distantly by release date and the number of recommendations. Any future iterations of this project should focus more heavily on feature engineering that captures information related to how a game may be percieved by critics and players.

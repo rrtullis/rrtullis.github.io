@@ -31,7 +31,7 @@ For my modeling process, I began with running a simple repeated five-fold cross 
 
 The models that ended up having any notable advantage over the dummy regressor were both ensemble tree methods - the Random Forest and the XGBoost Regressor. While a single decison tree performed exceptionally poorly, both of these ensemble methods showed significant improvement over the dummy regressor.
 
-An overview of untuned model performance is shown below. The code for each of these models can be found in `initial_models.qmd`.
+An overview of untuned model performance is shown below. The code for each of these models can be found on the Early Models page under Additional Materials.
 
 #### Untuned Model Performance
 |Model|Mean RMSE|Mean R2|
@@ -274,7 +274,7 @@ svd.fit(games_pca[cols])
 print(svd.explained_variance_ratio_.cumsum())
 ```
 
-<b> Number of components required to achieve 85%, 95% of variance capture, per feature </b>
+<b> Number of components required to achieve 85%, 90% variance capture, per feature </b>
 
 |feature | n_components .85 | n_components .9 |
 |-|-|-|

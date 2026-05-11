@@ -1,5 +1,5 @@
 ## Initial Models
-This file contains the pipelines and cross-validation processes for the initial untuned models I applied to this database. For reference, the table below contains the cross-validation performance of these baseline models.
+This page contains the pipelines and cross-validation processes for the initial untuned models I applied to this dataset. For reference, the table below contains the cross-validation performance of these baseline models.
 
 |Model|RMSE|R2|
 |-|-|-|
@@ -15,7 +15,7 @@ Though the data was cleaned in previous steps, there remains some general prepro
 
 ```{python}
 #| echo: false
-#| excecute: false
+#| eval: false
 import pandas as pd
 import numpy as np
 from xgboost import XGBRegressor
@@ -46,7 +46,7 @@ games["release_date"] = pd.to_datetime(games["release_date"], errors="coerce")
 games["release_date"] = games["release_date"].astype("int64") // 10**9 # convert from nanoseconds to seconds
 games["release_date"] = games["release_date"].astype("float64")
 
-# convert estimated_owners to ordered categorical
+# convert estimated_owners to ordered category
 games["estimated_owners"] = pd.Categorical(games["estimated_owners"],
                                            categories=["0 - 0",
                                                   "0 - 20000",
@@ -66,7 +66,7 @@ games["estimated_owners"] = pd.Categorical(games["estimated_owners"],
                                            ordered=True)                                     
 ```
 
-The next step is separating our general feature lists for use in numeric or categorical-specific pipelines. Previously, I intentionally stored all binary nominal features as integers to make this easier.
+The next step was genrating my general feature lists for use in numeric or categorical-specific pipelines. Previously, I intentionally stored all binary nominal features as integers to make this easier.
 
 ```{python}
 #| eval: false
