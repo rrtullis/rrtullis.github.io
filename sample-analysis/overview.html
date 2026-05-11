@@ -8,7 +8,7 @@
 
 <meta name="author" content="Reagan Tullis">
 
-<title>Data Cleaning – rrtullis.github.io</title>
+<title>Predicting Metacritic Scores from Steam Data – rrtullis.github.io</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -141,7 +141,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Sample Analysis</a></li><li class="breadcrumb-item"><a href="../sample-analysis/data_cleaning.html">Data Cleaning</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Sample Analysis</a></li><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Overview</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -170,13 +170,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../sample-analysis/overview.html" class="sidebar-item-text sidebar-link">
+  <a href="../sample-analysis/overview.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Overview</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../sample-analysis/data_cleaning.html" class="sidebar-item-text sidebar-link active">
+  <a href="../sample-analysis/data_cleaning.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Data Cleaning</span></a>
   </div>
 </li>
@@ -221,20 +221,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#loading-data" id="toc-loading-data" class="nav-link active" data-scroll-target="#loading-data">Loading Data</a></li>
-  <li><a href="#dropping-columns" id="toc-dropping-columns" class="nav-link" data-scroll-target="#dropping-columns">Dropping Columns</a></li>
-  <li><a href="#missingness-filtering-rows" id="toc-missingness-filtering-rows" class="nav-link" data-scroll-target="#missingness-filtering-rows">Missingness &amp; Filtering Rows</a></li>
-  <li><a href="#typing-features" id="toc-typing-features" class="nav-link" data-scroll-target="#typing-features">Typing Features</a></li>
-  <li><a href="#multi-hot-encoding" id="toc-multi-hot-encoding" class="nav-link" data-scroll-target="#multi-hot-encoding">Multi-Hot Encoding</a></li>
+  <li><a href="#dataset" id="toc-dataset" class="nav-link active" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data Cleaning</a></li>
+  <li><a href="#initial-models" id="toc-initial-models" class="nav-link" data-scroll-target="#initial-models">Initial Models</a></li>
+  <li><a href="#iteration" id="toc-iteration" class="nav-link" data-scroll-target="#iteration">Iteration</a></li>
+  <li><a href="#final-model" id="toc-final-model" class="nav-link" data-scroll-target="#final-model">Final Model</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Sample Analysis</a></li><li class="breadcrumb-item"><a href="../sample-analysis/data_cleaning.html">Data Cleaning</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Sample Analysis</a></li><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Overview</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Data Cleaning</h1>
+<h1 class="title">Predicting Metacritic Scores from Steam Data</h1>
 </div>
 
 
@@ -257,145 +258,202 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This page contains an overview of the data cleaning process for this sample analysis. Further information regarding the dataset can be found on the Data Documentation page under Additional Info.</p>
-<p>For this analysis, my goal was to predict the Metacritic score of a game based on the features included in this dataset. A Metacritic score is a 0-100 rating of a video game’s overall quality, and is generated by Metacritic by gathering and taking a weighted average of reviews from top critics and publications.</p>
-<section id="loading-data" class="level3">
-<h3 class="anchored" data-anchor-id="loading-data">Loading Data</h3>
-<p>Data was loaded from a .json file and transposed to standard format using pandas.</p>
-<div id="31c82e4a" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>games_raw <span class="op">=</span> pd.read_json(<span class="st">"data/games.json"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>games_raw <span class="op">=</span> games_raw.T</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The GitHub repository containing all code used in this analysis can be found at <a href="https://github.com/rrtullis/sample-analysis">https://github.com/rrtullis/sample-analysis</a>.</p>
+<section id="dataset" class="level2">
+<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
+<p>The data used in this analysis was sourced from <a href="https://www.kaggle.com/ds/2109585">Kaggle</a>. It contains information fetched from Steam’s API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds an ~70% market share. A full overview of the <code>games</code> dataset, with information on its features, can be found on the Data Documentation page under Additional Info.</p>
+<p>The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is claculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this dataset is shown below.</p>
+<div id="86c4ea9d" class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+<figure class="figure">
+<p><img src="overview_files/figure-html/cell-4-output-1.png" width="672" height="480" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The scores present in this dataset range from 6 to 97, with a mean of ~73.9 and a standard deviation of ~10.3. The distribution is somewhat left-skewed, but I opted not to transform <code>metacritic_score</code>, as I wanted my model’s predictions to be interpretable as the actual predicted score, rather than a transformation of the score.</p>
+</section>
+<section id="data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
+<p>The data used in this analysis was loaded from a <code>.json</code> and required extensive cleaning before it could be used. This cleaning involved manually typing each feature appropriately, dealing with placeholder missing values, and dropping any columns that wouldn’t be useful for analysis. A full walkthrough of this process can be found on the Data Cleaning page.</p>
+<p>The main event for data cleaning came when dealing with five columns in particular: <code>supported_languages</code>, <code>full_audio_languages</code>, <code>genres</code>, and <code>categories</code> all contained lists of strings, and <code>tags</code> contained dictionaries. In order to convert these columns to a usuable format for analysis, I used sklearn’s <code>MultiLabelBinarizer</code> to convert the list columns to a set of binary columns, where a 1 in a given column (e.g., supported_languages_English) would indicate that, for instance, the game supports the English language.</p>
+<div id="eb275e02" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>games_encoded <span class="op">=</span> games_typed.copy()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> list_features:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    mlb <span class="op">=</span> MultiLabelBinarizer()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    transformed <span class="op">=</span> mlb.fit_transform(games_typed[f]) <span class="co"># generate binary columns</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert to DataFrame &amp; apply prefixes</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    transformed_df <span class="op">=</span> pd.DataFrame(transformed, columns<span class="op">=</span>[f <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> <span class="bu">str</span>(c) <span class="cf">for</span> c <span class="kw">in</span> mlb.classes_], index<span class="op">=</span>games_typed.index)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    games_encoded <span class="op">=</span> pd.concat([games_encoded, transformed_df], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># drop original column</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    games_encoded <span class="op">=</span> games_encoded.drop(columns<span class="op">=</span>[f])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As for <code>tags</code>, I used pandas’ <code>json_normalize</code> method to achieve a similar result, with the main difference that the added columns and values corresponded to key-value pairs in the dictionary. The final dataset that I used to train my models on had 4256 rows and 757 columns.</p>
+</section>
+<section id="initial-models" class="level2">
+<h2 class="anchored" data-anchor-id="initial-models">Initial Models</h2>
+<p>To begin the modeling phase, I performed a simple repeated K-fold cross validation of a number of basic, untuned models that used sklearn’s and XGBoost’s default parameters. The full preprocessing pipeline and code for each of these models can be found on the Early Models page under Additional Info. An overview of their initial results is shown below.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Mean RMSE</th>
+<th>Mean R2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Baseline (Dummy Regressor)</td>
+<td>10.2742</td>
+<td>-0.0003</td>
+</tr>
+<tr class="even">
+<td>Untuned Lasso</td>
+<td>9.8811</td>
+<td>0.0717</td>
+</tr>
+<tr class="odd">
+<td>KNN-5</td>
+<td>10.0834</td>
+<td>0.02752</td>
+</tr>
+<tr class="even">
+<td>Untuned Decision Tree</td>
+<td>10.7124</td>
+<td>-0.0975</td>
+</tr>
+<tr class="odd">
+<td>Untuned Random Forest</td>
+<td>7.6184</td>
+<td>0.4479</td>
+</tr>
+<tr class="even">
+<td>Untuned XGBoost Regressor</td>
+<td>7.6498</td>
+<td>0.4420</td>
+</tr>
+</tbody>
+</table>
+<p>Linear models like Lasso performed poorly, as did K-Nearest Neighbors and a lone Decision Tree. The ensemble tree methods of a Random Forest and XGBoost Regressor vastly outperformed the other models.</p>
+</section>
+<section id="iteration" class="level2">
+<h2 class="anchored" data-anchor-id="iteration">Iteration</h2>
+<p>Based off of the initial models’ performance, I chose to iterate on both ensemble tree models. I began with some modest tuning, which slightly improved their performance. As before, a full explanation of my process, along with the code required to reproduce my results, can be found on the Modeling page.</p>
+<p>This provided some improvement, but I was concerned about the high dimensionality of my data, and thought that if I could distill my 756 features into a smaller number of columns I may get better results. My first attempt at this was to simply remove the columns generated from <code>MultiLabelBinarizer</code> and <code>json_normalize</code> from my training data. The resulting metrics were immediately poorer, and I opted to pursue another angle.</p>
+<p>My next attempt involved using sklearn’s <code>TruncatedSVD</code> to generate new features that captured the variance of <code>supported_languages</code>, <code>full_audio_languages</code>, <code>genres</code>, <code>categories</code>, and <code>tags</code>. I used <code>TruncatedSVD</code> over standard PCA since, unlike PCA, <code>TruncatedSVD</code> does not center the data, making it better for sparse data like my own. I also opted to apply <code>TruncatedSVD</code> to each of the five groups of columns seperately because I wanted to preserve the domain of each group. When selecting how many features to return for each group, I made sure that I had enough to capture at least 90% of the variance in the category.<br>
+Unfortunately, even after tuning these models still performed worse than my modestly tuned models. What ultimately became my best-performing model was a XGBoost Regressor operating on the original dataset that had been subjected to extensive tuning. The only change was an added feature - the ratio of positive to negative votes, stored in <code>positive_negative_ratio</code>.</p>
+</section>
+<section id="final-model" class="level2">
+<h2 class="anchored" data-anchor-id="final-model">Final Model</h2>
+<p>The full preprocessing pipeline for my final model, along with its tuning grid, is shown below.</p>
+<section id="new-feature" class="level4">
+<h4 class="anchored" data-anchor-id="new-feature">New Feature</h4>
+<div id="5ec9fb38" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>games<span class="op">=</span>games.copy()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>games[<span class="st">"positive_negative_ratio"</span>] <span class="op">=</span> games[<span class="st">"positive"</span>]<span class="op">/</span>(games[<span class="st">"negative"</span>]<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>num_features <span class="op">+=</span> [<span class="st">"positive_negative_ratio"</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>features <span class="op">+=</span> [<span class="st">"positive_negative_ratio"</span>]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># reinitialize the sets with the new feature</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>games_train, games_test <span class="op">=</span> train_test_split(</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    games,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">4025</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="dropping-columns" class="level3">
-<h3 class="anchored" data-anchor-id="dropping-columns">Dropping Columns</h3>
-<p>For this analysis, I decided not to use unstructured text or image data. Columns containing this type of information were dropped, along with others that would not be useful for analytical purposes. See comments for further justification.</p>
-<div id="5890cee3" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>games_dropped <span class="op">=</span> games_raw.drop(columns<span class="op">=</span>[<span class="st">"name"</span>, <span class="co"># ID variable</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"detailed_description"</span>, <span class="co"># unstructured text</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"about_the_game"</span>, <span class="co"># unstructured text</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"short_description"</span>, <span class="co"># unstructured text</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"reviews"</span>, <span class="co"># unstructured text</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"header_image"</span>, <span class="co"># image data</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"website"</span>, <span class="co"># high cardinality &amp; sparse representation</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"support_url"</span>, <span class="co"># high cardinality &amp; sparse representation</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"support_email"</span>, <span class="co"># high cardinality &amp; sparse representation</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"windows"</span>, <span class="co"># zero variance</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"metacritic_url"</span>, <span class="co"># high cardinality &amp; sparse representation</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"average_playtime_2weeks"</span>, <span class="co"># not reflective of historic data</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"median_playtime_2weeks"</span>, <span class="co"># not reflective of historic data</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"notes"</span>, <span class="co"># unstructured text</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"packages"</span>, <span class="co"># not comparable across games</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"developers"</span>, <span class="co"># high cardinality &amp; sparse representation</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"publishers"</span>, <span class="co"># high cardinality &amp; sparse representation</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"screenshots"</span>, <span class="co"># image data</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"movies"</span>, <span class="co"># zero variance</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"user_score"</span>, <span class="co"># extreme missingness</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"score_rank"</span>, <span class="co"># extreme missingness</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">"discount"</span> <span class="co"># not reflective of historic data</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                                        ])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="preprocessing-pipeline" class="level4">
+<h4 class="anchored" data-anchor-id="preprocessing-pipeline">Preprocessing Pipeline</h4>
+<div id="2e27daf8" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dt_ord_prep <span class="op">=</span> Pipeline([ <span class="co"># ordinal feature processing</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ordinal_encoder"</span>, OrdinalEncoder())</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>dt_nom_prep <span class="op">=</span> Pipeline([ <span class="co"># nominal feature processing</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"onehot_encoder"</span>, OneHotEncoder(handle_unknown<span class="op">=</span><span class="st">"ignore"</span>, drop<span class="op">=</span><span class="st">"if_binary"</span>)),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"variance_threshold"</span>, VarianceThreshold(threshold<span class="op">=</span><span class="fl">0.01</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>dt_num_prep <span class="op">=</span> Pipeline([ <span class="co"># numeric feature processing</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"median"</span>))</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>dt_prep <span class="op">=</span> ColumnTransformer([ <span class="co"># full preprocessing setup</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ord"</span>, dt_ord_prep, ord_features),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"nom"</span>, dt_nom_prep, nom_features),</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"num"</span>, dt_num_prep, num_features)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="missingness-filtering-rows" class="level3">
-<h3 class="anchored" data-anchor-id="missingness-filtering-rows">Missingness &amp; Filtering Rows</h3>
-<p>This dataset does not contain any true missing values. Instead, 0 is a stand-in for missing values in numeric columns, and “” is a stand-in in string-valued columns. In most cases, this choice makes sense - “no achievements” and “zero achievements” mean the same thing - but in the case of <code>metacritic_score</code>, a real zero would indicate a bad score, so it was more appropriate to treat zeroes there as missing values. Furthermore, rows in which <code>metacritic_score == 0</code> lack an entry in the <code>metacritic_url</code> column, indicating that they were never reviewed by Metacritic.</p>
-<p>As for the remainder of the columns still included in the dataframe, I have verified that a zero truly means zero. The one remaining categorical column - <code>estimated_owners</code> - does not contain any placeholder values.</p>
-<p>Since <code>metacritic_score</code> is my target variable, I dropped rows in which <code>metacritic_score == 0</code>.</p>
-<div id="db535ec8" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># drop all rows where the target variable is null</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>games_dropped <span class="op">=</span> games_dropped[games_dropped[<span class="st">"metacritic_score"</span>] <span class="op">!=</span> <span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="typing-features" class="level3">
-<h3 class="anchored" data-anchor-id="typing-features">Typing Features</h3>
-<p>Due to the data being loaded from a <code>.json</code>, all features were initially typed as <code>object</code>. This had to be corrected manually.</p>
-<div id="b7d17ed4" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sort features by desired type - this must be done manually</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>num_features <span class="op">=</span> [<span class="st">"required_age"</span>, </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">"price"</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"dlc_count"</span>, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"metacritic_score"</span>, </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"achievements"</span>, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"recommendations"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">"positive"</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                <span class="st">"negative"</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">"average_playtime_forever"</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                <span class="st">"median_playtime_forever"</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                <span class="st">"peak_ccu"</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                ]</span>
+<section id="model-tuning" class="level4">
+<h4 class="anchored" data-anchor-id="model-tuning">Model &amp; Tuning</h4>
+<div id="a3fed18c" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>xgb_pipe <span class="op">=</span> Pipeline([ <span class="co"># xgb modeling pipeline</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, dt_prep),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, XGBRegressor())</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>new_xgb_param_grid <span class="op">=</span> { <span class="co"># new, expanded parameter grid</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__n_estimators"</span>: np.linspace(<span class="dv">300</span>, <span class="dv">1500</span>, <span class="dv">20</span>, dtype<span class="op">=</span><span class="bu">int</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__max_depth"</span>: [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">8</span>],</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__learning_rate"</span>: np.logspace(<span class="op">-</span><span class="fl">2.5</span>, <span class="op">-</span><span class="fl">0.5</span>, <span class="dv">10</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 'randomness' parameters</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__subsample"</span>: np.linspace(<span class="fl">0.6</span>, <span class="fl">1.0</span>, <span class="dv">5</span>), <span class="co"># proportion of observations available to each tree</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__colsample_bytree"</span>: np.linspace(<span class="fl">0.3</span>, <span class="fl">1.0</span>, <span class="dv">8</span>), <span class="co"># proportion of columns available to each tree</span></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>bool_features <span class="op">=</span> [<span class="st">"mac"</span>, <span class="st">"linux"</span>]</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>cat_features <span class="op">=</span> [<span class="st">"estimated_owners"</span>]</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># split allowance parameters</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__min_child_weight"</span>: [<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>], <span class="co"># minimum number of samples required in a leaf</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__gamma"</span>: [<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="dv">1</span>], <span class="co"># minimum reduction in loss required to split</span></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>datetime_features <span class="op">=</span> [<span class="st">"release_date"</span>]</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>list_features <span class="op">=</span> [<span class="st">"supported_languages"</span>,</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"full_audio_languages"</span>,</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"categories"</span>,</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"genres"</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                ]</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>dict_features <span class="op">=</span> [<span class="st">"tags"</span>]</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># type features appropriately</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>games_typed<span class="op">=</span> games_dropped.copy()</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co"># numerics</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> num_features:</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    games_typed[f] <span class="op">=</span> games_typed[f].astype(<span class="bu">float</span>)</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co"># binary columns</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> bool_features:</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    games_typed[f] <span class="op">=</span> games_typed[f].astype(<span class="bu">int</span>)</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="co"># categories</span></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> cat_features:</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    games_typed[f] <span class="op">=</span> pd.Categorical(games_typed[f])</span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="co"># datetimes</span></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> datetime_features:</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    games_typed[f] <span class="op">=</span> pd.to_datetime(games_typed[f])</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    games_typed[<span class="bu">str</span>(f) <span class="op">+</span> <span class="st">"_year"</span>] <span class="op">=</span> games_typed[f].dt.year</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    games_typed[<span class="bu">str</span>(f) <span class="op">+</span> <span class="st">"_month"</span>] <span class="op">=</span> games_typed[f].dt.month</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="co"># dict columns</span></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> dict_features:</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># an empty list is used as a placeholder for games with no tags</span></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># so we can fill those in with an empty dict to be consistent with the rest of the column</span></span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    games_typed[f] <span class="op">=</span> games_typed[f].<span class="bu">apply</span>(<span class="kw">lambda</span> x: {} <span class="cf">if</span> x <span class="op">==</span> [] <span class="cf">else</span> x)</span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    f_expanded <span class="op">=</span> pd.json_normalize(games_typed[f])</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add prefix</span></span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    f_expanded <span class="op">=</span> f_expanded.add_prefix(f <span class="op">+</span> <span class="st">"_"</span>)</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># align index with original dataframe</span></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    f_expanded.index <span class="op">=</span> games_dropped.index</span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>    <span class="co"># concatenate with original dataframe</span></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    games_typed <span class="op">=</span> pd.concat([games_typed, f_expanded], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># drop original dict column</span></span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    games_typed <span class="op">=</span> games_typed.drop(columns<span class="op">=</span>[f])</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="co"># fill NaNs created by empty dicts with 0s - this is appropriate since a missing tag is equivalent to a tag with a value of 0</span></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>games_typed <span class="op">=</span> games_typed.fillna(<span class="dv">0</span>)</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="co"># (note that we had no NaNs in the original dataframe, so any NaNs in games_typed were created by the dict expansion process)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># regularization parameters</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__reg_alpha"</span>: np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">10</span>), <span class="co"># encourages sparsity in leaves</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__reg_lambda"</span>: np.logspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">10</span>), <span class="co"># shrinks leaf weights </span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>new_xgb_rs <span class="op">=</span> RandomizedSearchCV( </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    xgb_pipe,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    new_xgb_param_grid,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    n_iter<span class="op">=</span><span class="dv">200</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span>rkf,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    scoring<span class="op">=</span>[<span class="st">"neg_mean_squared_error"</span>, <span class="st">"r2"</span>],</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    refit<span class="op">=</span><span class="st">"neg_mean_squared_error"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    n_jobs<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">4025</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The final results of this model on the test set are shown below.</p>
+<div id="bc3d8ed6" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>best_xgb <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">"saved_objects/tuned_xgb.pkl"</span>, <span class="st">"rb"</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>xgb_preds <span class="op">=</span> best_xgb.predict(games_test[features])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>xgb_r2 <span class="op">=</span> r2_score(games_test[target], xgb_preds)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>xgb_rmse <span class="op">=</span> root_mean_squared_error(games_test[target], xgb_preds)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"New XGBoost R2:"</span>, xgb_r2)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"New XGBoost RMSE:"</span>, xgb_rmse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>New XGBoost R2: 0.5185717254641573
+New XGBoost RMSE: 7.127757438729044</code></pre>
+</div>
+</div>
+<p>In the end, I had a tuned XGBoost Regressor that had a test RMSE of ~7.1 and an R2 score of ~0.52. I used permutation importance to determine which features the model relied on the most.</p>
+<div id="3c820bae" class="cell" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+<figure class="figure">
+<p><img src="overview_files/figure-html/cell-11-output-1.png" width="672" height="480" class="figure-img"></p>
+</figure>
+</div>
+</div>
 </div>
 </section>
-<section id="multi-hot-encoding" class="level3">
-<h3 class="anchored" data-anchor-id="multi-hot-encoding">Multi-Hot Encoding</h3>
-<p>A number of columns (those included in <code>list_columns</code> above) contained a list of values. For instance, a value of <code>supported_languages</code> may be <code>["English", "Spanish"]</code>. These needed to be multi-hot encoded before I could use them in my analysis.</p>
-<div id="0dd7e0dc" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>games_encoded <span class="op">=</span> games_typed.copy()</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> list_features:</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    mlb <span class="op">=</span> MultiLabelBinarizer()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    transformed <span class="op">=</span> mlb.fit_transform(games_typed[f])</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    transformed_df <span class="op">=</span> pd.DataFrame(transformed, columns<span class="op">=</span>[f <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> <span class="bu">str</span>(c) <span class="cf">for</span> c <span class="kw">in</span> mlb.classes_], index<span class="op">=</span>games_typed.index)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    games_encoded <span class="op">=</span> pd.concat([games_encoded, transformed_df], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># drop original column</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    games_encoded <span class="op">=</span> games_encoded.drop(columns<span class="op">=</span>[f])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>With the data cleaning complete for now, I opted to save this cleaned dataframe as a <code>.csv</code> for ease of use later on.</p>
-<div id="8da2b568" class="cell" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>games_encoded.to_csv(<span class="st">"data/games_clean.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+</section>
+<section id="interpretation" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation">Interpretation</h2>
+<p>Based on my metrics, my model was able to explain ~52% of the variance in Metarcitic score, and made predictions that were, on average, off by ~7.1 points. This is a notable improvement over a dummy regressor, but is not particularly impressive overall. One reason for this mediocore performance may be that the <code>games</code> dataset does not contain information that is particularly relevant to a game’s Metacritic score. Most of the data used in this analysis was scraped from the Steam store, and while a storefront is a decent place to start collecting information, a game’s store presentation does not necessarily reflect how people will percieve or rate it. Were the dataset to contain more relevant information, I expect the performance metrics could be improved drastically.</p>
+<p>As for the columns we do have, the model relies most heavily upon the engineered ratio of positive to negative votes, followed distantly by release date and the number of recommendations. Any future iterations of this project should focus more heavily on feature engineering that captures information related to how a game may be percieved by critics and players.</p>
 
 
 </section>

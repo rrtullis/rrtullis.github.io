@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://rrtullis.github.io/sample-analysis/data_cleaning.html</loc>
-    <lastmod>2026-04-21T21:56:53.905Z</lastmod>
+    <loc>https://rrtullis.github.io/sample-analysis/overview.html</loc>
+    <lastmod>2026-05-11T17:45:15.077Z</lastmod>
   </url>
   <url>
-    <loc>https://rrtullis.github.io/index.html</loc>
-    <lastmod>2026-04-21T21:30:35.896Z</lastmod>
+    <loc>https://rrtullis.github.io/sample-analysis/initial_models.html</loc>
+    <lastmod>2026-05-11T17:43:10.302Z</lastmod>
+  </url>
+  <url>
+    <loc>https://rrtullis.github.io/sample-analysis/data-info.html</loc>
+    <lastmod>2026-05-11T17:18:03.980Z</lastmod>
   </url>
   <url>
     <loc>https://rrtullis.github.io/about.html</loc>
     <lastmod>2026-04-21T21:30:35.896Z</lastmod>
   </url>
   <url>
-    <loc>https://rrtullis.github.io/sample-analysis/data-info.html</loc>
-    <lastmod>2026-04-21T22:05:31.758Z</lastmod>
+    <loc>https://rrtullis.github.io/index.html</loc>
+    <lastmod>2026-05-11T16:55:37.617Z</lastmod>
+  </url>
+  <url>
+    <loc>https://rrtullis.github.io/sample-analysis/data_cleaning.html</loc>
+    <lastmod>2026-05-11T17:23:28.438Z</lastmod>
+  </url>
+  <url>
+    <loc>https://rrtullis.github.io/sample-analysis/modeling.html</loc>
+    <lastmod>2026-05-11T17:43:04.548Z</lastmod>
   </url>
 </urlset>

@@ -73,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -91,61 +91,113 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-sample-analysis" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Sample Analysis</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-sample-analysis">    
-        <li>
-    <a class="dropdown-item" href="../sample-analysis/overview.qmd">
- <span class="dropdown-text">Overview</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../sample-analysis/data_cleaning.html">
- <span class="dropdown-text">Data Cleaning</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../sample-analysis/eda.qmd">
- <span class="dropdown-text">Exploratory Data Analysis</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../sample-analysis/modeling.qmd">
- <span class="dropdown-text">Modeling</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../sample-analysis/data-info.html">
- <span class="dropdown-text">Additional Info</span></a>
-  </li>  
-    </ul>
-  </li>
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Sample Analysis</a></li><li class="breadcrumb-item"><a href="../sample-analysis/data-info.html">Additional Materials</a></li><li class="breadcrumb-item"><a href="../sample-analysis/data-info.html">Data Documentation</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About Me</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sample Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sample-analysis/overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sample-analysis/data_cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Cleaning</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sample-analysis/modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Additional Materials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sample-analysis/data-info.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data Documentation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sample-analysis/initial_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Early Models</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-info" id="toc-data-info" class="nav-link active" data-scroll-target="#data-info">Data Info</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../sample-analysis/overview.html">Sample Analysis</a></li><li class="breadcrumb-item"><a href="../sample-analysis/data-info.html">Additional Materials</a></li><li class="breadcrumb-item"><a href="../sample-analysis/data-info.html">Data Documentation</a></li></ol></nav></header>
 
 
 
 
-<p>This file contains a high-level overview of the dataset used for this analysis. Information regarding the meaning of each column was limited - most of the descriptions listed below were based on manual inspection of the data and domain knowledge.</p>
+<section id="data-info" class="level2">
+<h2 class="anchored" data-anchor-id="data-info">Data Info</h2>
+<p>This page contains a high-level overview of the dataset used for this analysis. Information regarding the meaning of each column was limited - most of the descriptions listed below were based on manual inspection of the data and domain knowledge.</p>
 <p>Source:<br>
 Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 <a href="https://www.kaggle.com/ds/2109585">https://www.kaggle.com/ds/2109585</a></p>
@@ -239,7 +291,7 @@ Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 </tr>
 <tr class="odd">
 <td>support_email</td>
-<td>URL of the game’s support email</td>
+<td>Email address of the game’s customer support team</td>
 <td>str</td>
 <td>N</td>
 </tr>
@@ -281,7 +333,7 @@ Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 </tr>
 <tr class="even">
 <td>recomendations</td>
-<td>The number of “Recommended” reviews the game has recieved</td>
+<td>The total number of reccomendations the game has recieved</td>
 <td>int</td>
 <td>Y</td>
 </tr>
@@ -305,7 +357,7 @@ Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 </tr>
 <tr class="even">
 <td>packages</td>
-<td>List of dictionaries of different bundles or editions of the game available for purchase</td>
+<td>List of dictionaries of different bundles and/or editions of the game available for purchase</td>
 <td>list of dict</td>
 <td>N</td>
 </tr>
@@ -359,13 +411,13 @@ Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 </tr>
 <tr class="odd">
 <td>positive</td>
-<td>Number of positive SteamSpy user votes</td>
+<td>Number of positive user votes, per SteamSpy</td>
 <td>int</td>
 <td>Y</td>
 </tr>
 <tr class="even">
 <td>negative</td>
-<td>Number of negative SteamSpy user votes</td>
+<td>Number of negative user votes, SteamSpy</td>
 <td>int</td>
 <td>Y</td>
 </tr>
@@ -385,7 +437,7 @@ Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 <td>average_playtime_2weeks</td>
 <td>Average playtime (hours) of game owners over the last 2 weeks</td>
 <td>int</td>
-<td>Y</td>
+<td>N</td>
 </tr>
 <tr class="even">
 <td>median_playtime_forever</td>
@@ -397,7 +449,7 @@ Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 <td>median_playtime_2weeks</td>
 <td>Median playtime (hours) of game owners over the last 2 weeks</td>
 <td>int</td>
-<td>Y</td>
+<td>N</td>
 </tr>
 <tr class="even">
 <td>discount</td>
@@ -421,6 +473,7 @@ Martin Bustos Roman (2022). <em>Steam Games Dataset</em>. Kaggle.<br>
 </table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
