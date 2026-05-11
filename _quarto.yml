@@ -6,22 +6,43 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Home
-      - about.qmd
-      - text: "Sample Analysis"
-        menu:
-          - href: sample-analysis/overview.qmd
-            text: "Overview"
-          - href: sample-analysis/data_cleaning.qmd
-            text: "Data Cleaning"
-          - href: sample-analysis/eda.qmd
-            text: "Exploratory Data Analysis"
-          - href: sample-analysis/modeling.qmd
-            text: "Modeling"
+        text: "Home"
+  sidebar:
+  - id: "main_sidebar"
+    title: "Contents"
+    contents:
+    - text: "About Me"
+      href: index.qmd
+    - section: "Sample Analysis"
+      contents:
+        - href: sample-analysis/overview.qmd
+          text: "Overview"
+        - href: sample-analysis/data_cleaning.qmd
+          text: "Data Cleaning"
+        - href: sample-analysis/modeling.qmd
+          text: "Modeling"
+        - section: "Additional Materials"
+          contents:
           - href: sample-analysis/data-info.qmd
-            text: "Additional Info"
+            text: "Data Documentation"
+          - href: sample-analysis/initial_models.qmd
+            text: "Early Models"
 
 
+      # - text: "Sample Analysis"
+      #   menu:
+      #     - href: sample-analysis/overview.qmd
+      #       text: "Overview"
+      #     - href: sample-analysis/data_cleaning.qmd
+      #       text: "Data Cleaning"
+      #     - href: sample-analysis/modeling.qmd
+      #       text: "Modeling"
+      # - text: "Analysis Supplements"
+      #   menu:
+      #     - href: sample-analysis/data-info.qmd
+      #       text: "Data Documentation"
+      #     - href: sample-analysis/initial_models.qmd
+      #       text: "Early Models"
 
 format:
   html:
