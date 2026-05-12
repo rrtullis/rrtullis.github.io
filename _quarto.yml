@@ -3,10 +3,6 @@ project:
 
 website:
   title: "rrtullis.github.io"
-  navbar:
-    left:
-      - href: index.qmd
-        text: "Home"
   sidebar:
   - id: "main_sidebar"
     title: "Contents"

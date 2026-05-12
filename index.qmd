@@ -1,7 +1,7 @@
 ---
-title: "rrtullis.github.io"
+title: "Reagan Tullis"
 ---
+### About Me
+I'm an honors student currently studying Computer Science, Mathematics, and Data Science at the College of Idaho, with plans to pursue a Master's degree. I posess strong foundations in machine learning, algorithm design, and software engineering, and am dedicated to solving complex problems with intelligent, efficient solutions.
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+<a href=https://www.linkedin.com/in/reagan-tullis-102350354/ class="btn btn-tertiary">LinkedIn</a> <a href=https://github.com/rrtullis class="btn btn-tertiary">GitHub</a> <a href=RRTULLIS_Resume_05-10-2026.pdf class="btn btn-secondary" target="_blank">Resume</a>
