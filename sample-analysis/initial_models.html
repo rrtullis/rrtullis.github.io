@@ -285,7 +285,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="general-preprocessing" class="level3">
 <h3 class="anchored" data-anchor-id="general-preprocessing">General Preprocessing</h3>
 <p>Though the data was cleaned in previous steps, there remains some general preprocessing that must be done when loading the data from <code>games_clean.csv</code>.</p>
-<div id="c7dd0586" class="cell" data-execution_count="2">
+<div id="795ca6c2" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load data</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>games <span class="op">=</span> pd.read_csv(<span class="st">"data/games_clean.csv"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>games <span class="op">=</span> games.drop(columns<span class="op">=</span>[<span class="st">"Unnamed: 0"</span>]) <span class="co"># drop index column created by pandas when saving to csv</span></span>
@@ -316,7 +316,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                                           ordered<span class="op">=</span><span class="va">True</span>)                                     </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The next step was genrating my general feature lists for use in numeric or categorical-specific pipelines. Previously, I intentionally stored all binary nominal features as integers to make this easier.</p>
-<div id="a560a0cb" class="cell" data-execution_count="3">
+<div id="b06442c8" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ord_features <span class="op">=</span> [<span class="st">"estimated_owners"</span>]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>nom_features <span class="op">=</span> games.select_dtypes(include<span class="op">=</span>[<span class="st">"int32"</span>, <span class="st">"int64"</span>]).drop(columns<span class="op">=</span>[<span class="st">"release_date_month"</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                                                             <span class="st">"release_date_year"</span>]).columns.tolist()</span>
@@ -329,7 +329,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">"metacritic_score"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Lastly, I split the <code>games</code> into training and test sets, and set up a <code>RepeatedKFold</code> object for upcoming cross validation.</p>
-<div id="2ee16181" class="cell" data-execution_count="4">
+<div id="55300262" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>games_train, games_test <span class="op">=</span> train_test_split(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    games,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
@@ -342,7 +342,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="dummy-regressor" class="level3">
 <h3 class="anchored" data-anchor-id="dummy-regressor">Dummy Regressor</h3>
 <p>As a baseline, I created a dummy regressor to compare potential models to. Its performance, along with that of all other models, can be seen in the table at the top of this page.</p>
-<div id="8e7bdef6" class="cell" data-execution_count="5">
+<div id="2744c510" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> DummyRegressor(strategy<span class="op">=</span><span class="st">"mean"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>base.fit(games_train[features], games_train[target])</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>base_preds <span class="op">=</span> base.predict(games_test[features])</span>
@@ -353,7 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="linear-models" class="level3">
 <h3 class="anchored" data-anchor-id="linear-models">Linear Models</h3>
 <p>All linear models used the same preprocessing pipeline, shown below:</p>
-<div id="ea55be8a" class="cell" data-execution_count="6">
+<div id="11f7812b" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lr_ord_prep <span class="op">=</span> Pipeline([</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ordinal_encoder"</span>, OrdinalEncoder())</span>
@@ -379,7 +379,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="lasso" class="level4">
 <h4 class="anchored" data-anchor-id="lasso">Lasso</h4>
 <p>Lasso cross-validation is shown below:</p>
-<div id="4acf7053" class="cell" data-execution_count="7">
+<div id="c45de073" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>lasso_pipe <span class="op">=</span> Pipeline([</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, lr_prep),</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, Lasso())</span>
@@ -398,7 +398,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="k-nearest-neighbors" class="level3">
 <h3 class="anchored" data-anchor-id="k-nearest-neighbors">K-Nearest Neighbors</h3>
 <p>The KNN preprocessing pipeline is shown below:</p>
-<div id="0e8c903e" class="cell" data-execution_count="8">
+<div id="f2805f2b" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>knn_ord_prep <span class="op">=</span> Pipeline([</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)),</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ordinal_encoder"</span>, OrdinalEncoder())</span>
@@ -422,7 +422,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>KNN cross-validation is shown below:</p>
-<div id="ef8ab5f0" class="cell" data-execution_count="9">
+<div id="0f83ece3" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>knn_pipe <span class="op">=</span> Pipeline([</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, knn_prep),</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, KNeighborsRegressor())</span>
@@ -440,7 +440,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="tree-based-models" class="level3">
 <h3 class="anchored" data-anchor-id="tree-based-models">Tree-Based Models</h3>
 <p>The tree-based model preprocessing pipeline is shown below:</p>
-<div id="bdf561fe" class="cell" data-execution_count="10">
+<div id="533e970b" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dt_ord_prep <span class="op">=</span> Pipeline([</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)),</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ordinal_encoder"</span>, OrdinalEncoder())</span>
@@ -465,7 +465,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="decision-tree" class="level4">
 <h4 class="anchored" data-anchor-id="decision-tree">Decision Tree</h4>
 <p>Decision Tree cross-validation is shown below:</p>
-<div id="c87e6934" class="cell" data-execution_count="11">
+<div id="67330cdd" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dt_pipe <span class="op">=</span> Pipeline([</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, dt_prep),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, DecisionTreeRegressor())</span>
@@ -483,7 +483,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="random-forest" class="level4">
 <h4 class="anchored" data-anchor-id="random-forest">Random Forest</h4>
 <p>Random Forest cross-validation is shown below:</p>
-<div id="7c79456f" class="cell" data-execution_count="12">
+<div id="b4aa648d" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rf_pipe <span class="op">=</span> Pipeline([</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, dt_prep),</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, RandomForestRegressor(random_state<span class="op">=</span><span class="dv">4025</span>))</span>
@@ -501,7 +501,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="xgboost-regressor" class="level4">
 <h4 class="anchored" data-anchor-id="xgboost-regressor">XGBoost Regressor</h4>
 <p>XGBoost cross-validation is shown below:</p>
-<div id="80c70b82" class="cell" data-execution_count="13">
+<div id="7921da68" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>xgb_pipe <span class="op">=</span> Pipeline([</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, dt_prep),</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, XGBRegressor())</span>

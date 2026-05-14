@@ -251,9 +251,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The GitHub repository containing all code used in this analysis can be found at <a href="https://github.com/rrtullis/sample-analysis">https://github.com/rrtullis/sample-analysis</a>.</p>
 <section id="dataset" class="level2">
 <h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
-<p>The data used in this analysis was sourced from <a href="https://www.kaggle.com/ds/2109585">Kaggle</a>. It contains information fetched from Steam’s API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds an ~70% market share. A full overview of the <code>games</code> dataset, with information on its features, can be found on the Data Documentation page under Additional Info.</p>
-<p>The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is claculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this dataset is shown below.</p>
-<div id="86c4ea9d" class="cell" data-execution_count="4">
+<p>The data used in this analysis was sourced from <a href="https://www.kaggle.com/ds/2109585">Kaggle</a>. It contains information fetched from Steam’s API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds ~70% market share. A full overview of the <code>games</code> dataset, with information on its features, can be found on the Data Documentation page under Additional Info.</p>
+<p>The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is calculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this dataset is shown below.</p>
+<div id="09d20d40" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 <figure class="figure">
@@ -268,7 +268,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
 <p>The data used in this analysis was loaded from a <code>.json</code> and required extensive cleaning before it could be used. This cleaning involved manually typing each feature appropriately, dealing with placeholder missing values, and dropping any columns that wouldn’t be useful for analysis. A full walkthrough of this process can be found on the Data Cleaning page.</p>
 <p>The main event for data cleaning came when dealing with five columns in particular: <code>supported_languages</code>, <code>full_audio_languages</code>, <code>genres</code>, and <code>categories</code> all contained lists of strings, and <code>tags</code> contained dictionaries. In order to convert these columns to a usuable format for analysis, I used sklearn’s <code>MultiLabelBinarizer</code> to convert the list columns to a set of binary columns, where a 1 in a given column (e.g., supported_languages_English) would indicate that, for instance, the game supports the English language.</p>
-<div id="eb275e02" class="cell" data-execution_count="5">
+<div id="6613ab68" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>games_encoded <span class="op">=</span> games_typed.copy()</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> list_features:</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    mlb <span class="op">=</span> MultiLabelBinarizer()</span>
@@ -330,7 +330,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="iteration" class="level2">
 <h2 class="anchored" data-anchor-id="iteration">Iteration</h2>
 <p>Based off of the initial models’ performance, I chose to iterate on both ensemble tree models. I began with some modest tuning, which slightly improved their performance. As before, a full explanation of my process, along with the code required to reproduce my results, can be found on the Modeling page.</p>
-<p>This provided some improvement, but I was concerned about the high dimensionality of my data, and thought that if I could distill my 756 features into a smaller number of columns I may get better results. My first attempt at this was to simply remove the columns generated from <code>MultiLabelBinarizer</code> and <code>json_normalize</code> from my training data. The resulting metrics were immediately poorer, and I opted to pursue another angle.</p>
+<p>While modeling, I was concerned about the high dimensionality of my data, and thought that if I could distill my 756 features into a smaller number of columns I may get better results. My first attempt at this was to simply remove the columns generated from <code>MultiLabelBinarizer</code> and <code>json_normalize</code> from my training data. The resulting metrics were immediately poorer, and I opted to pursue another angle.</p>
 <p>My next attempt involved using sklearn’s <code>TruncatedSVD</code> to generate new features that captured the variance of <code>supported_languages</code>, <code>full_audio_languages</code>, <code>genres</code>, <code>categories</code>, and <code>tags</code>. I used <code>TruncatedSVD</code> over standard PCA since, unlike PCA, <code>TruncatedSVD</code> does not center the data, making it better for sparse data like my own. I also opted to apply <code>TruncatedSVD</code> to each of the five groups of columns seperately because I wanted to preserve the domain of each group. When selecting how many features to return for each group, I made sure that I had enough to capture at least 90% of the variance in the category.<br>
 Unfortunately, even after tuning these models still performed worse than my modestly tuned models. What ultimately became my best-performing model was a XGBoost Regressor operating on the original dataset that had been subjected to extensive tuning. The only change was an added feature - the ratio of positive to negative votes, stored in <code>positive_negative_ratio</code>.</p>
 </section>
@@ -339,7 +339,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 <p>The full preprocessing pipeline for my final model, along with its tuning grid, is shown below.</p>
 <section id="new-feature" class="level4">
 <h4 class="anchored" data-anchor-id="new-feature">New Feature</h4>
-<div id="5ec9fb38" class="cell" data-execution_count="6">
+<div id="16cc11ef" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>games<span class="op">=</span>games.copy()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>games[<span class="st">"positive_negative_ratio"</span>] <span class="op">=</span> games[<span class="st">"positive"</span>]<span class="op">/</span>(games[<span class="st">"negative"</span>]<span class="op">+</span><span class="dv">1</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>num_features <span class="op">+=</span> [<span class="st">"positive_negative_ratio"</span>]</span>
@@ -355,7 +355,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 </section>
 <section id="preprocessing-pipeline" class="level4">
 <h4 class="anchored" data-anchor-id="preprocessing-pipeline">Preprocessing Pipeline</h4>
-<div id="2e27daf8" class="cell" data-execution_count="7">
+<div id="677979a1" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dt_ord_prep <span class="op">=</span> Pipeline([ <span class="co"># ordinal feature processing</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ordinal_encoder"</span>, OrdinalEncoder())</span>
@@ -380,7 +380,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 </section>
 <section id="model-tuning" class="level4">
 <h4 class="anchored" data-anchor-id="model-tuning">Model &amp; Tuning</h4>
-<div id="a3fed18c" class="cell" data-execution_count="8">
+<div id="1b73954a" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>xgb_pipe <span class="op">=</span> Pipeline([ <span class="co"># xgb modeling pipeline</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, dt_prep),</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, XGBRegressor())</span>
@@ -415,25 +415,45 @@ Unfortunately, even after tuning these models still performed worse than my mode
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">4025</span></span>
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>This tuning process found that the following parameters were optimal:</p>
+<div id="9f5a47ea" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>best_parameters <span class="op">=</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__n_estimators"</span>: <span class="dv">1247</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__max_depth"</span>: <span class="dv">6</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__learning_rate"</span>: <span class="fl">0.000779</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 'randomness' parameters</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__subsample"</span>: <span class="fl">0.7</span>, <span class="co"># proportion of observations available to each tree</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__colsample_bytree"</span>: <span class="fl">0.000999</span>, <span class="co"># proportion of columns available to each tree</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># split allowance parameters</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__min_child_weight"</span>: <span class="dv">1</span>, <span class="co"># minimum number of samples required in a leaf</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__gamma"</span>: <span class="fl">0.1</span>, <span class="co"># minimum reduction in loss required to split</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># regularization parameters</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__reg_alpha"</span>: <span class="fl">0.000434</span>, <span class="co"># encourages sparsity in leaves</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__reg_lambda"</span>: <span class="fl">4.6415</span>, <span class="co"># shrinks leaf weights </span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <p>The final results of this model on the test set are shown below.</p>
-<div id="bc3d8ed6" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>best_xgb <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">"saved_objects/tuned_xgb.pkl"</span>, <span class="st">"rb"</span>))</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>xgb_preds <span class="op">=</span> best_xgb.predict(games_test[features])</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>xgb_r2 <span class="op">=</span> r2_score(games_test[target], xgb_preds)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>xgb_rmse <span class="op">=</span> root_mean_squared_error(games_test[target], xgb_preds)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"New XGBoost R2:"</span>, xgb_r2)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"New XGBoost RMSE:"</span>, xgb_rmse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="bf3977b2" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>best_xgb <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">"saved_objects/tuned_xgb.pkl"</span>, <span class="st">"rb"</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>xgb_preds <span class="op">=</span> best_xgb.predict(games_test[features])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>xgb_r2 <span class="op">=</span> r2_score(games_test[target], xgb_preds)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>xgb_rmse <span class="op">=</span> root_mean_squared_error(games_test[target], xgb_preds)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"New XGBoost R2:"</span>, xgb_r2)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"New XGBoost RMSE:"</span>, xgb_rmse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>New XGBoost R2: 0.5185717254641573
 New XGBoost RMSE: 7.127757438729044</code></pre>
 </div>
 </div>
 <p>In the end, I had a tuned XGBoost Regressor that had a test RMSE of ~7.1 and an R2 score of ~0.52. I used permutation importance to determine which features the model relied on the most.</p>
-<div id="3c820bae" class="cell" data-execution_count="11">
+<div id="15ddc4d5" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 <figure class="figure">
-<p><img src="overview_files/figure-html/cell-11-output-1.png" width="672" height="480" class="figure-img"></p>
+<p><img src="overview_files/figure-html/cell-12-output-1.png" width="672" height="480" class="figure-img"></p>
 </figure>
 </div>
 </div>
