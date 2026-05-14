@@ -68,9 +68,9 @@ games=games.copy()
 The GitHub repository containing all code used in this analysis can be found at [https://github.com/rrtullis/sample-analysis](https://github.com/rrtullis/sample-analysis).
 
 ## Dataset
-The data used in this analysis was sourced from [Kaggle](https://www.kaggle.com/ds/2109585). It contains information fetched from Steam's API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds an ~70% market share. A full overview of the `games` dataset, with information on its features, can be found on the Data Documentation page under Additional Info.
+The data used in this analysis was sourced from [Kaggle](https://www.kaggle.com/ds/2109585). It contains information fetched from Steam's API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds ~70% market share. A full overview of the `games` dataset, with information on its features, can be found on the Data Documentation page under Additional Info.
 
-The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is claculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this dataset is shown below.
+The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is calculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this dataset is shown below.
 
 ```{python}
 #| echo: false
@@ -121,7 +121,7 @@ Linear models like Lasso performed poorly, as did K-Nearest Neighbors and a lone
 ## Iteration
 Based off of the initial models' performance, I chose to iterate on both ensemble tree models. I began with some modest tuning, which slightly improved their performance. As before, a full explanation of my process, along with the code required to reproduce my results, can be found on the Modeling page.
 
-This provided some improvement, but I was concerned about the high dimensionality of my data, and thought that if I could distill my 756 features into a smaller number of columns I may get better results. My first attempt at this was to simply remove the columns generated from `MultiLabelBinarizer` and `json_normalize` from my training data. The resulting metrics were immediately poorer, and I opted to pursue another angle.
+While modeling, I was concerned about the high dimensionality of my data, and thought that if I could distill my 756 features into a smaller number of columns I may get better results. My first attempt at this was to simply remove the columns generated from `MultiLabelBinarizer` and `json_normalize` from my training data. The resulting metrics were immediately poorer, and I opted to pursue another angle.
 
 My next attempt involved using sklearn's `TruncatedSVD` to generate new features that captured the variance of `supported_languages`, `full_audio_languages`, `genres`, `categories`, and `tags`. I used `TruncatedSVD` over standard PCA since, unlike PCA, `TruncatedSVD` does not center the data, making it better for sparse data like my own. I also opted to apply `TruncatedSVD` to each of the five groups of columns seperately because I wanted to preserve the domain of each group. When selecting how many features to return for each group, I made sure that I had enough to capture at least 90% of the variance in the category.  
 Unfortunately, even after tuning these models still performed worse than my modestly tuned models. What ultimately became my best-performing model was a XGBoost Regressor operating on the original dataset that had been subjected to extensive tuning. The only change was an added feature - the ratio of positive to negative votes, stored in `positive_negative_ratio`.
@@ -205,6 +205,28 @@ new_xgb_rs = RandomizedSearchCV(
     n_jobs=-1,
     random_state=4025
 )
+```
+
+This tuning process found that the following parameters were optimal:
+```{python}
+#| eval: false
+best_parameters = {
+    "model__n_estimators": 1247,
+    "model__max_depth": 6,
+    "model__learning_rate": 0.000779,
+
+    # 'randomness' parameters
+    "model__subsample": 0.7, # proportion of observations available to each tree
+    "model__colsample_bytree": 0.000999, # proportion of columns available to each tree
+
+    # split allowance parameters
+    "model__min_child_weight": 1, # minimum number of samples required in a leaf
+    "model__gamma": 0.1, # minimum reduction in loss required to split
+
+    # regularization parameters
+    "model__reg_alpha": 0.000434, # encourages sparsity in leaves
+    "model__reg_lambda": 4.6415, # shrinks leaf weights 
+}
 ```
 
 The final results of this model on the test set are shown below.
