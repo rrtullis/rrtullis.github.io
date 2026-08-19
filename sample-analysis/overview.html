@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,6 +10,9 @@
 
 <title>Predicting Metacritic Scores from Steam Data – rrtullis.github.io</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -68,15 +71,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e31584831b205ffbb2d98406f31c2a5b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-a0f9fd0d421825b736dc1bbcbcba2219.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -253,7 +255,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
 <p>The data used in this analysis was sourced from <a href="https://www.kaggle.com/ds/2109585">Kaggle</a>. It contains information fetched from Steam’s API and supplemental information from SteamSpy. Steam is a major platform for PC gaming, and holds ~70% market share. A full overview of the <code>games</code> dataset, with information on its features, can be found on the Data Documentation page under Additional Info.</p>
 <p>The goal for this analysis was to predict the Metacritic score of a game. Metacritic is an American website that rates TV shows, movies, and video games on a scale of 0-100. The true score is calculated as a weighted average of ratings from top professional critic reviews. The distribution of Metacritic scores in this dataset is shown below.</p>
-<div id="09d20d40" class="cell" data-execution_count="3">
+<div id="09d20d40" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 <figure class="figure">
@@ -268,7 +270,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
 <p>The data used in this analysis was loaded from a <code>.json</code> and required extensive cleaning before it could be used. This cleaning involved manually typing each feature appropriately, dealing with placeholder missing values, and dropping any columns that wouldn’t be useful for analysis. A full walkthrough of this process can be found on the Data Cleaning page.</p>
 <p>The main event for data cleaning came when dealing with five columns in particular: <code>supported_languages</code>, <code>full_audio_languages</code>, <code>genres</code>, and <code>categories</code> all contained lists of strings, and <code>tags</code> contained dictionaries. In order to convert these columns to a usuable format for analysis, I used sklearn’s <code>MultiLabelBinarizer</code> to convert the list columns to a set of binary columns, where a 1 in a given column (e.g., supported_languages_English) would indicate that, for instance, the game supports the English language.</p>
-<div id="6613ab68" class="cell" data-execution_count="4">
+<div id="6613ab68" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>games_encoded <span class="op">=</span> games_typed.copy()</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> list_features:</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    mlb <span class="op">=</span> MultiLabelBinarizer()</span>
@@ -339,7 +341,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 <p>The full preprocessing pipeline for my final model, along with its tuning grid, is shown below.</p>
 <section id="new-feature" class="level4">
 <h4 class="anchored" data-anchor-id="new-feature">New Feature</h4>
-<div id="16cc11ef" class="cell" data-execution_count="5">
+<div id="16cc11ef" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>games<span class="op">=</span>games.copy()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>games[<span class="st">"positive_negative_ratio"</span>] <span class="op">=</span> games[<span class="st">"positive"</span>]<span class="op">/</span>(games[<span class="st">"negative"</span>]<span class="op">+</span><span class="dv">1</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>num_features <span class="op">+=</span> [<span class="st">"positive_negative_ratio"</span>]</span>
@@ -355,7 +357,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 </section>
 <section id="preprocessing-pipeline" class="level4">
 <h4 class="anchored" data-anchor-id="preprocessing-pipeline">Preprocessing Pipeline</h4>
-<div id="677979a1" class="cell" data-execution_count="6">
+<div id="677979a1" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dt_ord_prep <span class="op">=</span> Pipeline([ <span class="co"># ordinal feature processing</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"imputer"</span>, SimpleImputer(strategy<span class="op">=</span><span class="st">"most_frequent"</span>)),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"ordinal_encoder"</span>, OrdinalEncoder())</span>
@@ -380,7 +382,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 </section>
 <section id="model-tuning" class="level4">
 <h4 class="anchored" data-anchor-id="model-tuning">Model &amp; Tuning</h4>
-<div id="1b73954a" class="cell" data-execution_count="7">
+<div id="1b73954a" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>xgb_pipe <span class="op">=</span> Pipeline([ <span class="co"># xgb modeling pipeline</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocessor"</span>, dt_prep),</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"model"</span>, XGBRegressor())</span>
@@ -416,7 +418,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 <span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This tuning process found that the following parameters were optimal:</p>
-<div id="9f5a47ea" class="cell" data-execution_count="8">
+<div id="9f5a47ea" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>best_parameters <span class="op">=</span> {</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__n_estimators"</span>: <span class="dv">1247</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model__max_depth"</span>: <span class="dv">6</span>,</span>
@@ -436,7 +438,7 @@ Unfortunately, even after tuning these models still performed worse than my mode
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The final results of this model on the test set are shown below.</p>
-<div id="bf3977b2" class="cell" data-execution_count="9">
+<div id="bf3977b2" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>best_xgb <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">"saved_objects/tuned_xgb.pkl"</span>, <span class="st">"rb"</span>))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>xgb_preds <span class="op">=</span> best_xgb.predict(games_test[features])</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>xgb_r2 <span class="op">=</span> r2_score(games_test[target], xgb_preds)</span>
@@ -449,7 +451,7 @@ New XGBoost RMSE: 7.127757438729044</code></pre>
 </div>
 </div>
 <p>In the end, I had a tuned XGBoost Regressor that had a test RMSE of ~7.1 and an R2 score of ~0.52. I used permutation importance to determine which features the model relied on the most.</p>
-<div id="15ddc4d5" class="cell" data-execution_count="11">
+<div id="15ddc4d5" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 <figure class="figure">
